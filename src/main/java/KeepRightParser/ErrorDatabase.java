@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Locale;
 
 public class ErrorDatabase {
 	
@@ -58,7 +60,22 @@ public class ErrorDatabase {
 	                + "	lat2 INTEGER,\n"
 	                + " msg_id TEXT"
 	                + ");";
+		    
 			System.out.print(" - Create table <errors>... ");
+			stmt.executeUpdate(sql);
+		    System.out.println("Ok!");
+		    
+		    sql = "DROP TABLE IF EXISTS info";
+			System.out.print(" - Deleting table <info>... ");
+			stmt.executeUpdate(sql);
+		    System.out.println("Ok!");
+		    
+		    sql = "CREATE TABLE info (\n"
+		    		+ " info_key TEXT,\n"
+	                + " info_value TEXT"
+	                + ");";
+		    
+			System.out.print(" - Create table <info>... ");
 			stmt.executeUpdate(sql);
 		    System.out.println("Ok!");
 		    
@@ -278,5 +295,48 @@ public class ErrorDatabase {
 	public long getCount() {
 		
 		return mCount;
+	}
+	
+	public void saveInfo(String fileTimeString) {
+		
+		addInfo("DB Version", KeepRightParser.APP_VERSION);
+		addInfo("Date-Time", fileTimeString);
+		addInfo("Error Count", String.format(Locale.US, "%,d", mCount));
+		
+		if (mAreas==null) {
+			
+			return;
+		}
+		
+		for(int i=0; i<mAreas.size(); i++) {
+			
+			AreaInfo area=mAreas.get(i);
+			
+			addInfo("Area #"+i+" Name", area.mAreaName);
+		}		
+	}
+	
+	private void addInfo(String key, String value) {
+		
+		System.out.println("addInfo(): key='"+key+"', value='"+value+"'");
+		
+		String sqlInsertInfo="INSERT INTO info(info_key, info_value) VALUES(?,?)";
+		
+		PreparedStatement stmtInsertInfo=null;
+		
+		try {
+			stmtInsertInfo=mConn.prepareStatement(sqlInsertInfo);
+			
+			stmtInsertInfo.setString(1, key);
+			stmtInsertInfo.setString(2, value);
+			stmtInsertInfo.executeUpdate();
+			
+		} catch (SQLException e) {
+			
+			System.out.println("addInfo() SQL Error: "+e.getMessage());
+		}
+		
+		
+		
 	}
 }

@@ -4,10 +4,11 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Locale;
 
 public class KeepRightParser {
 	
-	private final static String APP_VERSION = "1.00";
+	final static String APP_VERSION = "1.01";
 
 	public static void main(String[] args) {
 		
@@ -132,7 +133,9 @@ public class KeepRightParser {
 	    	
 	    	if ((System.currentTimeMillis()-prevTime)>5000) {
 	    		
-	    		System.out.println("Read "+lineCount+" lines");
+	    		String text=String.format(Locale.US, "Read %,d lines", lineCount);
+	    		
+	    		System.out.println(text);
 	    		
 	    		prevTime=System.currentTimeMillis();
 	    	}
@@ -143,11 +146,20 @@ public class KeepRightParser {
 	    		
 	    		areaDatabase.processLine(line);
 	    	}
+	    	
+	    	/*
+	    	if (lineCount > 100000)
+	    		break;
+	    	*/
 	    }
+	    
+	    fullDatabase.saveInfo(inputFile.mFileTimeString);
 	    
 	    fullDatabase.closeDatabase();
 	    
 	    if (areaDatabase!=null) {
+	    	
+	    	areaDatabase.saveInfo(inputFile.mFileTimeString);
 	    	
 	    	areaDatabase.closeDatabase();
 	    }

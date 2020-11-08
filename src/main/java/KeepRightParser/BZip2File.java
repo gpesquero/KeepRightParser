@@ -6,6 +6,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 
 import org.apache.commons.compress.compressors.CompressorException;
 import org.apache.commons.compress.compressors.CompressorInputStream;
@@ -14,6 +18,8 @@ import org.apache.commons.compress.compressors.CompressorStreamFactory;
 public class BZip2File {
 	
 	private BufferedReader mReader=null;
+	
+	public String mFileTimeString=null;
 	
 	public BZip2File() {
 		
@@ -44,6 +50,22 @@ public class BZip2File {
 			System.out.println("BZip2File Compressor Error: "+e.getMessage());
 			
 			mReader=null;
+			
+			return false;
+		}
+		
+		Path path = FileSystems.getDefault().getPath(fileName);
+		
+		try {
+			BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
+			
+			mFileTimeString=attrs.lastModifiedTime().toString();
+			
+			System.out.println("BZip2File Time String: "+mFileTimeString);
+		}
+		catch (IOException e) {
+			
+			System.out.println("BZip2File Files.readAttributes() Error: "+e.getMessage());
 			
 			return false;
 		}
