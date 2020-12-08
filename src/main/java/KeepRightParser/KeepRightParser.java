@@ -8,7 +8,7 @@ import java.util.Locale;
 
 public class KeepRightParser {
 	
-	final static String APP_VERSION = "1.01";
+	final static String APP_VERSION = "1.02";
 
 	public static void main(String[] args) {
 		
@@ -153,33 +153,35 @@ public class KeepRightParser {
 	    	*/
 	    }
 	    
-	    fullDatabase.saveInfo(inputFile.mFileTimeString);
+	    fullDatabase.saveInfo(inputFile.mFileDateString);
 	    
 	    fullDatabase.closeDatabase();
 	    
 	    if (areaDatabase!=null) {
 	    	
-	    	areaDatabase.saveInfo(inputFile.mFileTimeString);
+	    	areaDatabase.saveInfo(inputFile.mFileDateString);
 	    	
 	    	areaDatabase.closeDatabase();
 	    }
 		    
 	    Duration totalElapsedTime=Duration.between(startTime, Instant.now());
 	    
-	    System.out.println("Read a total of "+lineCount+" lines in "+
+	    System.out.println("Read a total of "+
+	    		String.format(Locale.US, "%,d", lineCount)+" lines in "+
 	    		totalElapsedTime.toMinutes()+" min. and "+
 	    		totalElapsedTime.toSecondsPart()+" secs.");
 	    
-	    String text="";
-	    
 	    if (areaDatabase!=null) {
+	    	
+	    	String text=String.format(Locale.US, "Area Database count=%,d",
+	    			areaDatabase.getCount());
 		    
 		    if (lineCount>0) {
 		    	
-		    	text=String.format(" (%.1f%%)", 100.0*areaDatabase.getCount()/lineCount);
+		    	text+=String.format(" (%.1f%%)", 100.0*areaDatabase.getCount()/lineCount);
 		    }
 		    
-		    System.out.println("PartialDatabase count="+areaDatabase.getCount()+text);
+		    System.out.println(text);
 	    }
 	    
 	    System.out.println("KeepRightParser finished...");

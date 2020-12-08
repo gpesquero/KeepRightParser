@@ -19,7 +19,7 @@ public class BZip2File {
 	
 	private BufferedReader mReader=null;
 	
-	public String mFileTimeString=null;
+	public String mFileDateString=null;
 	
 	public BZip2File() {
 		
@@ -59,9 +59,12 @@ public class BZip2File {
 		try {
 			BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
 			
-			mFileTimeString=attrs.lastModifiedTime().toString();
+			mFileDateString=attrs.lastModifiedTime().toString();
 			
-			System.out.println("BZip2File Time String: "+mFileTimeString);
+			mFileDateString=mFileDateString.substring(0,
+					mFileDateString.indexOf("T"));
+			
+			System.out.println("BZip2File Date String: "+mFileDateString);
 		}
 		catch (IOException e) {
 			

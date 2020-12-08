@@ -8,10 +8,11 @@ import java.sql.Statement;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Locale;
 
 public class ErrorDatabase {
+	
+	String mFileName;
 	
 	Connection mConn=null;
 	
@@ -29,6 +30,8 @@ public class ErrorDatabase {
 	}
 
 	public boolean createDatabase(String fileName, ArrayList<AreaInfo> areas) {
+		
+		mFileName=fileName;
 		
 		mAreas=areas;
 		
@@ -299,6 +302,8 @@ public class ErrorDatabase {
 	
 	public void saveInfo(String fileTimeString) {
 		
+		System.out.println("Saving info to database <"+mFileName+">...");
+		
 		addInfo("DB Version", KeepRightParser.APP_VERSION);
 		addInfo("Date-Time", fileTimeString);
 		addInfo("Error Count", String.format(Locale.US, "%,d", mCount));
@@ -334,9 +339,6 @@ public class ErrorDatabase {
 		} catch (SQLException e) {
 			
 			System.out.println("addInfo() SQL Error: "+e.getMessage());
-		}
-		
-		
-		
+		}	
 	}
 }
